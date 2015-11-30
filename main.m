@@ -10,14 +10,17 @@ P = x2;
 T = y2;
 
 % To create a network with one hidden layer and five neurons 
-net = feedforwardnet(5);
+net = feedforwardnet(20);
 net = configure(net, P, T);
 
 % To train the ntwork for 100 epochs, and plot the output
 net.trainParam.epochs = 100;
 net = train(net, P, T);
-Y = sim(net, P);
 
-disp(size(P));
+% Simulate nn
+% Y = sim(net, P);
 
-plot(P, T, P, Y, 'r.');
+Y = testANN(net, x);
+
+Y
+%plot(P, T, P, Y, 'r.');
