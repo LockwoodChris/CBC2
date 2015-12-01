@@ -13,14 +13,18 @@ T = y2;
 net = feedforwardnet(20);
 net = configure(net, P, T);
 
-% To train the ntwork for 100 epochs, and plot the output
+% To train the ntwork for 100 epochs
 net.trainParam.epochs = 100;
-net = train(net, P, T);
+[net, tr] = train(net, P, T);
 
-% Simulate nn
-% Y = sim(net, P);
+% Best epoch
+disp(tr.best_epoch);
 
-Y = testANN(net, x);
+% Best performance on training set
+disp(tr.best_perf);
 
-Y
+% Best performance on validation set
+disp(tr.best_vperf);
+
+
 %plot(P, T, P, Y, 'r.');

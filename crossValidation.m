@@ -40,10 +40,10 @@ function [] = crossValidation(k, x, y)
         % To train the ntwork for 100 epochs, and plot the output
         net.trainParam.epochs = 100;
         
-        [nets{i}, tr{i}] = traingd(net, P, T);
+        [nets{i}, tr{i}] = train(net, P, T);
 
         % Best epoch
-        disp(tr{i}.lr);
+        disp(tr{i}.best_epoch);
 
         % Best performance on training set
         disp(tr{i}.best_perf);
