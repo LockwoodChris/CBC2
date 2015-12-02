@@ -1,6 +1,6 @@
 % Cross validation for the parameter estimation
-
-function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x, y, params)
+% Second parameter estimation for more specific configurations
+function [avgTrainingError, avgValidationError, bestNet] = crossValidation2(k, x, y, params)
    
     % Transpose values into expected format
     [x2, y2] = ANNdata(x, y);
@@ -20,7 +20,7 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
     heuristic2 = 90;
     % Between input and output layer size (6 and 45) we chose 20
     heuristic3 = 20;
-    hunitsPossible = [6, heuristic3, heuristic1, 45];
+    hunitsPossible = [11, heuristic3, heuristic1, 45];
        
     % Number of hidden layers
     % Not beyond 4 because to hard to train
@@ -35,17 +35,24 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
     lAlgo = {'traingd','traingda','traingdm','trainrp'};
     trainingFunc = lAlgo{params{2}};
     
-    % Default rate is .01
-    % usually takes small values, usually between .01 and .1
-    gd_lrates = {.01, .05 , .1};
+    % First run had better results with higher learning rate
+    gd_lrates = {.1, .3, .5}; 
     
-    gda_lr_inc_rs = {1.05, 1.1, 1.15};
-    gda_lr_dec_rs = {0.5, 0.6, 0.7};
+    % First results had best results towards lower inc/dec 
+    % best lrate was .05
+    gda_lrates = {.02, .05, .07}; 
+    gda_lr_inc_rs = {.20, .6, 1};
+    gda_lr_dec_rs = {.1, .3, 0.5};
     
-    gdm_mcs = {0.85, 0.9, 0.95};
+    % First runs were very bad exploring outside old space
+    % Best learning was 3 so we slide our window
+    gdm_lrates = {.1, .3, .5};
+    gdm_mcs = {.3, .55, .80};
     
-    rp_inc = {1.3, 1.2, 1.1};
-    rp_dec = {0.6, 0.5, 0.4};
+    % Based on first run values
+    rp_lrates = {.005, .01, .015};
+    rp_inc = {1.7, 1.5, 1.3};
+    rp_dec = {.55, .5, .45};
     
     % saves errors over iterations
     validationError = cell(k,1);
@@ -75,18 +82,22 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
         net.divideParam.testInd  = 1:0;
        
         % Training Params need to be set here:
-        net.trainParam.lr = gd_lrates{params{3}};
+        
         if strcmp(trainingFunc,'traingd')
+            net.trainParam.lr = gd_lrates{params{3}};
             %net.trainFcn = 'traingd';
         elseif strcmp(trainingFunc, 'traingda')
             %net.trainFcn = 'traingda';
+            net.trainParam.lr = gda_lrates{params{3}};
             net.trainParam.lr_inc = gda_lr_inc_rs{params{4}};
             net.trainParam.lr_dec = gda_lr_dec_rs{params{5}}; 
         elseif strcmp(trainingFunc, 'traingdm')
             %net.trainFcn = 'traingdm';
+            net.trainParam.lr = gdm_lrates{params{3}};
             net.trainParam.mc = gdm_mcs{params{4}};
         else %'trainrp'
             %net.trainFcn = 'trainrp';
+            net.trainParam.lr = rp_lrates{params{3}};
             net.trainParam.delt_inc = rp_inc{params{4}}; 
             net.trainParam.delt_dec = rp_dec{params{5}};
         end
