@@ -39,15 +39,13 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
     % usually takes small values, usually between .01 and .1
     gd_lrates = {.01, .05 , .1};
     
-    gda_lrates = [];
-    gda_lr_inc_rs = [];
-    gda_lr_dec_rs = [];
+    gda_lr_inc_rs = {1.05, 1.1, 1.15};
+    gda_lr_dec_rs = {0.5, 0.6, 0.7};
     
-    gdm_lrates = [];
-    gdm_mcs = [];
+    gdm_mcs = {0.85, 0.9, 0.95};
     
-    rp_inc = [];
-    rp_dec = [];
+    rp_inc = {1.3, 1.2, 1.1};
+    rp_dec = {0.6, 0.5, 0.4};
     
     % saves errors over iterations
     validationError = cell(k,1);
@@ -73,19 +71,25 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
         % Use indices specified previously
         net.divideParam.trainInd = [ts1{i}:te1{i} ts2{i}:te2{i}];
         net.divideParam.valInd   = [vs{i}:ve{i}];
-        net.divideParam.testInd   = 1:0;
+        net.divideParam.testInd  = 1:0;
        
         % Training Params need to be set here:
+        net.trainParam.lr = gd_lrates{params{3}};
         if strcmp(trainingFunc,'traingd')
-            % Learning rate for normal gd
-            net.trainParam.lr = gd_lrates{params{3}};
+            net.trainFcn = 'traingd';
         elseif strcmp(trainingFunc, 'traingda')
-            
+            net.trainFcn = 'traingda';
+            net.trainParam.delt_inc = gda_lr_inc_rs{params{4}};
+            net.trainParam.delt_dec = gda_lr_dec_rs{params{5}}; 
         elseif strcmp(trainingFunc, 'traingdm')
-            
+            net.trainFcn = 'traingdm';
+            net.trainParam.mc = gdm_mcs{params{4}};
         else %'trainrp'
-            
+            net.trainFcn = 'trainrp';
+            net.trainParam.delt_inc = rp_inc{params{4}}; 
+            net.trainParam.delt_dec = rp_dec{params{5}};
         end
+        
         
         % To train the ntwork for 100 epochs
         net.trainParam.epochs = 100;
