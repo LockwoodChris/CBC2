@@ -76,16 +76,16 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
         % Training Params need to be set here:
         net.trainParam.lr = gd_lrates{params{3}};
         if strcmp(trainingFunc,'traingd')
-            net.trainFcn = 'traingd';
+            %net.trainFcn = 'traingd';
         elseif strcmp(trainingFunc, 'traingda')
-            net.trainFcn = 'traingda';
+            %net.trainFcn = 'traingda';
             net.trainParam.delt_inc = gda_lr_inc_rs{params{4}};
             net.trainParam.delt_dec = gda_lr_dec_rs{params{5}}; 
         elseif strcmp(trainingFunc, 'traingdm')
-            net.trainFcn = 'traingdm';
+            %net.trainFcn = 'traingdm';
             net.trainParam.mc = gdm_mcs{params{4}};
         else %'trainrp'
-            net.trainFcn = 'trainrp';
+            %net.trainFcn = 'trainrp';
             net.trainParam.delt_inc = rp_inc{params{4}}; 
             net.trainParam.delt_dec = rp_dec{params{5}};
         end

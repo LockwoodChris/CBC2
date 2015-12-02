@@ -14,7 +14,7 @@ for i =1:84
         [avgTrainingError, avgValidationError, net] = crossValidation(10, x, y, params);
         
         testValErrorResults{i, j} = avgValidationError;
-        testNetResults{i, j} = net;
+        testNetResults{i, j}
         
         if(bestValidationError > avgValidationError)
             bestValidationError = avgTrainingError;
@@ -25,6 +25,6 @@ for i =1:84
 end
 disp(bestValidationError);
 disp(bestParams);
-results = {bestNet, bestParams, bestValidationError, testValErrorResults, testNetResults};
+results = {bestNet, bestParams, bestValidationError};
 save('gdresults.mat', 'results');
 %end
