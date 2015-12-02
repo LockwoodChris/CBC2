@@ -7,7 +7,7 @@ for i=1:length(layers)
 end
 
 %Pre-index
-commies = cell(39,1);
+commies = cell(len,1);
 index = 1;
 for i=1:length(layers)
     m = permn(hu, layers(i));

@@ -1,18 +1,6 @@
 % Cross validation for the parameter estimation
 
-% Questions
-% 1. How do we extract data from the training of the network? It gives us
-% some results in GUI form like % error 
-% 2. At the bottom of the crossValidation function, we try to calculate the
-% validation and classification error ourselves, however this is very
-% different from the ones shown in the GUI, have we calculated something
-% wrong?
-% 3. Parameter estimation: How do we chose the ranges for the values we
-% want to test? We were planning on using the default values and then using
-% a percentage testing a range before and after the default
-% 4. Are we using divideind correctly to divide up our dataset?
-
-function [] = crossValidation(k, x, y)
+function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x, y, params)
    
     % Transpose values into expected format
     [x2, y2] = ANNdata(x, y);
@@ -21,16 +9,55 @@ function [] = crossValidation(k, x, y)
     % ve contains the validation set end indexes (t for training)    
     [ts1,te1, ts2, te2, vs, ve] = crossValidationIndexes(k, x, y);
     
-    % saves nets for the iterations
-    nets = cell(k,1);
-    % saves training record for the  net
-    tr = cell(k,1);
+    % Architecture configuration
+    
+    % "Rules of thumb" for choosing architecture
+    % Number of neurons
+    % Using heuristics
+    % heuristic1 = (input neurons + output neurons)* 2/3
+    heuristic1 = 34;
+    % Never larger than twisce the size of input layer
+    heuristic2 = 90;
+    % Between input and output layer size (6 and 45) we chose 20
+    heuristic3 = 20;
+    hunitsPossible = [6, heuristic3, heuristic1, 45];
+       
+    % Number of hidden layers
+    % Not beyond 4 because to hard to train
+    nlayerPossible = [1, 2, 3]; % Do 3 seperately
+    
+    % Number of hidden units combos
+    hiddenUnitsAndLayers = combineLayers(nlayerPossible,hunitsPossible);
+     size(hiddenUnitsAndLayers) %used to output limit
+    hiddenUnitParam = hiddenUnitsAndLayers{params{1}};
+    
+    % Different learning algos
+    lAlgo = {'traingd','traingda','traingdm','trainrp'};
+    trainingFunc = lAlgo{params{2}};
+    
+    % Default rate is .01
+    % usually takes small values, usually between .01 and .1
+    gd_lrates = {.01, .05 , .1};
+    
+    gda_lrates = [];
+    gda_lr_inc_rs = [];
+    gda_lr_dec_rs = [];
+    
+    gdm_lrates = [];
+    gdm_mcs = [];
+    
+    rp_inc = [];
+    rp_dec = [];
+    
     % saves errors over iterations
     validationError = cell(k,1);
     trainingError = cell(k,1);
+    % minError for bestNet
+    minError = Inf;
     for i = 1:k
-        % To create a network with one hidden layer and five neurons 
-        net = feedforwardnet(5);
+        % To create a network with specified learning function and
+        % hiddenunits
+        net = feedforwardnet(hiddenUnitParam, trainingFunc);
         net = configure(net, x2, y2);
         
         % To use our indices
@@ -47,35 +74,51 @@ function [] = crossValidation(k, x, y)
         net.divideParam.trainInd = [ts1{i}:te1{i} ts2{i}:te2{i}];
         net.divideParam.valInd   = [vs{i}:ve{i}];
         net.divideParam.testInd   = 1:0;
+       
+        % Training Params need to be set here:
+        if strcmp(trainingFunc,'traingd')
+            % Learning rate for normal gd
+            net.trainParam.lr = gd_lrates{params{3}};
+        elseif strcmp(trainingFunc, 'traingda')
+            
+        elseif strcmp(trainingFunc, 'traingdm')
+            
+        else %'trainrp'
+            
+        end
         
-%         st = sprintf('TrainInd: %d:%d, %d:%d', ts1{i}, te1{i}, ts2{i}, te2{i});
-%         disp(st);
-%         st = sprintf('ValInd: %d:%d', vs{i}, ve{i});
-%         disp(st);
-
         % To train the ntwork for 100 epochs
         net.trainParam.epochs = 100;
         
-        [nets{i}, tr{i}] = train(net, x2, y2);
+        [net, tr] = train(net, x2, y2);
         
         % Training Record outputted stats
         % Best epoch
-        disp(tr{i}.best_epoch);
+        %disp(tr.best_epoch);
 
         % Best performance on training set
-        disp(tr{i}.best_perf);
+        %disp(tr.best_perf);
 
         % Best performance on validation set
-        disp(tr{i}.best_vperf);
+        %disp(tr.best_vperf);
         
         validationPredictions = testANN(net, validationSet);
         trainingPredictions = testANN(net, trainingSet);
         
         validationError{i} = sum(validationPredictions ~= validationLabels)/size(validationPredictions,1);
         trainingError{i} = sum(trainingPredictions ~= trainingLabels)/size(trainingPredictions,1);
-        st = sprintf('Validation Error:%d \n Training Error:%d', validationError{i}*100, trainingError{i}*100);
-        disp(st);
+        
+        % Saves best performing net
+        if (minError > validationError{i})
+            minError = validationError{i};
+            bestNet = net;
+        end
+        
+        %st = sprintf('Validation Error:%d \nTraining Error:%d', validationError{i}*100, trainingError{i}*100);
+        %disp(st);
         
     end
-
+    
+    avgValidationError = mean(cell2mat(validationError));
+    avgTrainingError = mean(cell2mat(trainingError));
 end
