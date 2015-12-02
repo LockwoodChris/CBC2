@@ -9,22 +9,15 @@ P = x2;
 % T represents the targets
 T = y2;
 
-% To create a network with one hidden layer and five neurons 
-net = feedforwardnet(20);
-net = configure(net, P, T);
+net = feedforwardnet(54, 'traingdm');
+net = configure(net, x2, y2);
 
 % To train the ntwork for 100 epochs
 net.trainParam.epochs = 100;
+net.trainParam.lr = 0.3268;
+net.trainParam.mc = 0.5;
 [net, tr] = train(net, P, T);
 
-% Best epoch
-disp(tr.best_epoch);
+validationPredictions = testANN(net, x);
 
-% Best performance on training set
-disp(tr.best_perf);
-
-% Best performance on validation set
-disp(tr.best_vperf);
-
-
-%plot(P, T, P, Y, 'r.');
+validationError = sum(validationPredictions ~= y)/size(validationPredictions,1)

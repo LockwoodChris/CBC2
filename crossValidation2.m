@@ -1,4 +1,5 @@
 % Cross validation for the parameter estimation
+
 function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x, y, params)
    
     % Transpose values into expected format
