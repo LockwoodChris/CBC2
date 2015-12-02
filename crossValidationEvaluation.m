@@ -33,7 +33,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
     % First results had best results towards lower inc/dec 
     % best lrate was .05
     gda_lrates = {.02, .05, .07}; 
-    gda_lr_inc_rs = {.20, .6, 1};
+    gda_lr_inc_rs = {1.05, 1.1, 1.15};
     gda_lr_dec_rs = {.1, .3, 0.5};
     
     % First runs were very bad exploring outside old space
@@ -82,7 +82,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
                             % Gradient Descent normal case
                             net.trainParam.lr = gd_lrates{j};
                             %%%
-                            [net, tr] = train(net, trainData, trainLabels);
+                            [net, tr] = train(net, trainData2, trainLabels2);
                             testPredictions = testANN(net, testData);
                             error = sum(testPredictions ~= testLabels)/size(testPredictions,1);
                             if(bestErrors{i} > error)
@@ -99,7 +99,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
                                 for p = 1:3 % adaptive decrease rate
                                     net.trainParam.lr_dec = gda_lr_dec_rs{p}; 
                                     %%%
-                                    [net, tr] = train(net, trainData, trainLabels);
+                                    [net, tr] = train(net, trainData2, trainLabels2);
                                     testPredictions = testANN(net, testData);
                                     error = sum(testPredictions ~= testLabels)/size(testPredictions,1);
                                     if(bestErrors{i} > error)
@@ -115,7 +115,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
                             for m = 1:3 % mc
                                 net.trainParam.mc = gdm_mcs{m};
                                 %%%
-                                [net, tr] = train(net, trainData, trainLabels);
+                                [net, tr] = train(net, trainData2, trainLabels2);
                                 testPredictions = testANN(net, testData);
                                 error = sum(testPredictions ~= testLabels)/size(testPredictions,1);
                                 if(bestErrors{i} > error)
@@ -132,7 +132,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
                                 for p = 1:3 % delta dec
                                     net.trainParam.delt_dec = rp_dec{p}; 
                                     %%%
-                                    [net, tr] = train(net, trainData, trainLabels);
+                                    [net, tr] = train(net, trainData2, trainLabels2);
                                     testPredictions = testANN(net, testData);
                                     error = sum(testPredictions ~= testLabels)/size(testPredictions,1);
                                     if(bestErrors{i} > error)

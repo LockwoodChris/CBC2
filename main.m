@@ -1,25 +1,6 @@
 % Load x and y from dataset
-%load('./forstudents/cleandata_students.mat');
+%addpath(genpath('.'));
+[bestNets, bestErrors, bestConfig] = crossValidationEvaluation(10, x, y);
+results = {bestNets, bestErrors, bestConfig};
 
-% Transpose values into expected format
-[x2, y2] = ANNdata(x, y);
-
-% P represents the training input
-P = x2;
-% T represents the targets
-T = y2;
-
-% net = feedforwardnet(54, 'traingdm');
-% net = configure(net, x2, y2);
-% 
-% % To train the ntwork for 100 epochs
-% net.trainParam.epochs = 100;
-% net.trainParam.lr = 0.3268;
-% net.trainParam.mc = 0.5;
-% [net, tr] = train(net, P, T);
-[avgTrainingError, avgValidationError, net] = crossValidation(10, x, y, bestParams);
-avgValidationError
-
-%validationPredictions = testANN(bestNet, x);
-
-%validationError = sum(validationPredictions ~= y)/size(validationPredictions,1)
+save('crossValEval.mat', 'results');
