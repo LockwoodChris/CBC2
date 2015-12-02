@@ -12,7 +12,7 @@ for i =1:84
     for j = 1:3 % learning rate
         for k = 1:3 % adaptive increase rate
             params = {i, 3, j, k};
-            [avgTrainingError, avgValidationError, net] = crossValidation(10, x, y, params);
+            [avgTrainingError, avgValidationError, net] = crossValidation2(10, x, y, params);
         
             testValErrorResults{i, j, k} = avgValidationError;
             testNetResults{i, j, k} = net;
@@ -30,4 +30,4 @@ end
 disp(bestValidationError);
 disp(bestParams);
 results = {bestNet, bestParams, bestValidationError, testValErrorResults, testNetResults};
-save('gdmresults.mat', 'results');
+save('gdmresults2.mat', 'results');

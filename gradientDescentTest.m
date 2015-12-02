@@ -11,7 +11,7 @@ for i =1:84
     % for each different learning rate
     for j = 1:3
         params = {i, 1, j};
-        [avgTrainingError, avgValidationError, net] = crossValidation(10, x, y, params);
+        [avgTrainingError, avgValidationError, net] = crossValidation2(10, x, y, params);
         
         testValErrorResults{i, j} = avgValidationError;
         testNetResults{i, j} = net;
@@ -21,10 +21,13 @@ for i =1:84
             bestNet = net;
             bestParams = params;
         end
+        
+        s = sprintf('topology first %d, algorithm: %d', i, j);
+        disp(s);
     end
 end
 disp(bestValidationError);
 disp(bestParams);
 results = {bestNet, bestParams, bestValidationError, testValErrorResults, testNetResults};
-save('gdresults.mat', 'results');
+save('gdresults2.mat', 'results');
 %end
