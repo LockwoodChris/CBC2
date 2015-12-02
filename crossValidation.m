@@ -28,7 +28,7 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
     
     % Number of hidden units combos
     hiddenUnitsAndLayers = combineLayers(nlayerPossible,hunitsPossible);
-     size(hiddenUnitsAndLayers) %used to output limit
+    % size(hiddenUnitsAndLayers) %used to output limit
     hiddenUnitParam = hiddenUnitsAndLayers{params{1}};
     
     % Different learning algos
