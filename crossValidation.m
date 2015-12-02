@@ -57,6 +57,7 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
         % hiddenunits
         net = feedforwardnet(hiddenUnitParam, trainingFunc);
         net = configure(net, x2, y2);
+        net.trainParam.showWindow = 0;
         
         % To use our indices
         net.divideFcn = 'divideind';
@@ -79,8 +80,8 @@ function [avgTrainingError, avgValidationError, bestNet] = crossValidation(k, x,
             %net.trainFcn = 'traingd';
         elseif strcmp(trainingFunc, 'traingda')
             %net.trainFcn = 'traingda';
-            net.trainParam.delt_inc = gda_lr_inc_rs{params{4}};
-            net.trainParam.delt_dec = gda_lr_dec_rs{params{5}}; 
+            net.trainParam.lr_inc = gda_lr_inc_rs{params{4}};
+            net.trainParam.lr_dec = gda_lr_dec_rs{params{5}}; 
         elseif strcmp(trainingFunc, 'traingdm')
             %net.trainFcn = 'traingdm';
             net.trainParam.mc = gdm_mcs{params{4}};
