@@ -52,7 +52,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
     bestErrors = num2cell(zeros(k,1) + inf);
     bestConfig = cell(k, 1);
     
-    for i = 1:k
+    for i = 2:2
         % Setting the training data for the fold
         trainData = x([ts1{i}:te1{i} ts2{i}:te2{i}], :);
         trainLabels = y([ts1{i}:te1{i} ts2{i}:te2{i}], :);
@@ -77,6 +77,7 @@ function [bestNets, bestErrors, bestConfig] = crossValidationEvaluation(k, x, y)
                
                % learning rate
                 for j = 1:3
+                    fprintf('Iteration Index: %d, %d, %d, %d \n', i, topIndex, funcId, j);
                     switch funcId
                         case 1
                             % Gradient Descent normal case
