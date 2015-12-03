@@ -7,6 +7,10 @@ function [a] = plotLayer1Results(results)
         minErrors{1,i} = cell2mat(findMinErrorInCube(layer1));
     end
     plot(sizes, cell2mat(minErrors));
+    legend('traingdm','traingd','trainrp','traingda');
+    title('Network Topology performance for 1 layer of hidden neurons');
+    xlabel('Number of hidden neurons');
+    ylabel('Classification Error');
 end
 
 function minErrors = findMinErrorInCube(cube)

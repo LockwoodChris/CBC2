@@ -5,9 +5,15 @@ function [a] = plotLayer2Results(results)
         [layer1, layer2, layer3] = divideResultsInLayers(results{i,4});
         minErrors{i} = cell2mat(findMinErrorInLayer2(layer2));
     end
+    algos = {'traingdm','traingd','trainrp','traingda'};
     for i = 1:size(results,1)
         figure;
         surf(sizes, sizes, minErrors{i});
+        s = sprintf('Network Topology performance for 2 layers of hidden neurons for %s',algos{i});
+        title(s);
+        xlabel('Number of neurons in first layer');
+        ylabel('Number of neurons in second layer');
+        zlabel('Classification Error');
     end
 end
 
