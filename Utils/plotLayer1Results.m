@@ -9,8 +9,47 @@ function [a] = plotLayer1Results(results)
     plot(sizes, cell2mat(minErrors));
 end
 
-% 4d shape = i x 3 x 3 x 3
 function minErrors = findMinErrorInCube(cube)
+    size_ = length(size(cube));
+    if (size_==2)
+        minErrors = find2MinErrorInCube(cube);
+    elseif (size_==3)
+        minErrors = find3MinErrorInCube(cube);
+    else
+        minErrors = find4MinErrorInCube(cube);
+    end
+end
+
+% 4d shape = i x 3 x 3 x 3
+function minErrors = find2MinErrorInCube(cube)
+    minErrors = cell(4,1);
+    for i = 1:size(cube,1)
+        minError = 1;
+        for lr = 1:3
+           if (cube{i,lr} < minError)
+               minError = cube{i,lr};
+           end
+        end
+        minErrors{i} = minError;
+    end
+end
+
+function minErrors = find3MinErrorInCube(cube)
+    minErrors = cell(4,1);
+    for i = 1:size(cube,1)
+        minError = 1;
+        for lr = 1:3
+            for ilr = 1:3
+               if (cube{i,lr,ilr} < minError)
+                   minError = cube{i,lr,ilr};
+               end
+            end
+        end
+        minErrors{i} = minError;
+    end
+end
+
+function minErrors = find4MinErrorInCube(cube)
     minErrors = cell(4,1);
     for i = 1:size(cube,1)
         minError = 1;
